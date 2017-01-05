@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <entry key="site_title">${site_title}</entry>
+    <entry key="server_url">${server_url}</entry>
+    <entry key="keep_submissions_per_user_project">${keep_submissions_per_user_project}</entry>
+    <!--
+        Use the following two parameters to limit submission size.
+        The worst case total submission size on disk can be
+        calculated using this formula:
+
+        max_total_file_size_per_submission
+        + block_size * (max_number_of_files_per_submission - 1)
+
+        where block_size is the size of allocation units on disk (e.g. 4K)
+    -->
+    <entry key="max_total_file_size_per_submission">153600</entry><!-- 150KB -->
+    <entry key="max_number_of_files_per_submission">15</entry>
+</properties>

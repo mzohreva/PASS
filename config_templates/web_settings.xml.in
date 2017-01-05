@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <entry key="server_email_address">${server_email_address}</entry>
+    <entry key="email_server">${email_server}</entry>
+    <entry key="email_user">${email_user}</entry>
+    <entry key="email_password">${email_password}</entry>
+    <entry key="paging_size">${paging_size}</entry>
+    <entry key="concurrent_tasks">${concurrent_tasks}</entry>
+</properties>

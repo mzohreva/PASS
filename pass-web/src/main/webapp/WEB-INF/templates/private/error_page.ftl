@@ -1,0 +1,1 @@
+../public/error_page.ftl

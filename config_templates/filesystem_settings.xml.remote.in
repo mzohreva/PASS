@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <entry key="repository_path">${repository_path}</entry>
+    <entry key="master_key_path">${master_key_path}</entry>
+</properties>
