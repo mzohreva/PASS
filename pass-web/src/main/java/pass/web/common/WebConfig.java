@@ -26,7 +26,6 @@ public class WebConfig
     private String emailServer;
     private String emailUser;
     private String emailPassword;
-    private int pagingSize;
     private int concurrentTasks;
 
     private WebConfig()
@@ -43,7 +42,6 @@ public class WebConfig
             emailServer = params.get("email_server");
             emailUser = params.get("email_user");
             emailPassword = params.get("email_password");
-            pagingSize = Integer.parseInt(params.get("paging_size"));
             concurrentTasks = Integer.parseInt(params.get("concurrent_tasks"));
         }
         catch (NumberFormatException ex) {
@@ -76,11 +74,6 @@ public class WebConfig
         return MasterKey.getInstance().decrypt(emailPassword);
     }
 
-    public int getPagingSize()
-    {
-        return pagingSize;
-    }
-
     public int getConcurrentTasks()
     {
         return concurrentTasks;
@@ -102,9 +95,9 @@ public class WebConfig
                + "- Your program **should not open any files**\n\n"
                + "- Your code will be compiled on the server using `gcc` for C "
                + "  files and `g++` for C++ files\n\n"
-               + "- Each source code file ( **.c**, **.cpp**, **.cc** ) is "
-               + "  compiled separately using `-c` option and then all object "
-               + "  files are linked together\n\n"
+               + "- Each source code file ( **.c**, **.cpp** or **.cc** ) "
+               + "  is compiled separately and then all object files are "
+               + "  linked together\n\n"
                + "- You can mix C and C++ source files, the server will "
                + "  compile and link them as explained above\n\n"
                + "- You can specify compiler options below\n\n";

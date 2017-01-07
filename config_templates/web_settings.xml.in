@@ -6,6 +6,5 @@
     <entry key="email_server">${email_server}</entry>
     <entry key="email_user">${email_user}</entry>
     <entry key="email_password">${email_password}</entry>
-    <entry key="paging_size">${paging_size}</entry>
     <entry key="concurrent_tasks">${concurrent_tasks}</entry>
 </properties>
