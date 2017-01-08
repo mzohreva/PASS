@@ -53,6 +53,7 @@
         <url-pattern>*.png</url-pattern>
         <url-pattern>*.jpg</url-pattern>
         <url-pattern>*.gif</url-pattern>
+        <url-pattern>/fonts/*</url-pattern>
     </filter-mapping>
     <!-- Filter mappings for Authorization -->
     <filter-mapping>

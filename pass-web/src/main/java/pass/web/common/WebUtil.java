@@ -98,6 +98,7 @@ public class WebUtil
             dataModel.put("Projects", projects);
         }
         response.setContentType("text/html;charset=UTF-8");
+        response.setHeader("X-Frame-Options", "SAMEORIGIN");
         try (PrintWriter out = response.getWriter()) {
             Template t = Container.getInstance().getTemplate(template);
             t.process(dataModel, out);
