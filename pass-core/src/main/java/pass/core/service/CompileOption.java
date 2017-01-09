@@ -13,7 +13,11 @@ public enum CompileOption
     C11("CO_5", Category.C_DIALECTS, "C11", "--std=c11"),
     CPP98("CO_6", Category.CPP_DIALECTS, "C++98", "--std=c++98"),
     CPP03("CO_7", Category.CPP_DIALECTS, "C++03", "--std=c++03"),
-    CPP11("CO_8", Category.CPP_DIALECTS, "C++11", "--std=c++11");
+    CPP11("CO_8", Category.CPP_DIALECTS, "C++11", "--std=c++11"),
+    WNOWRITESTRINGS("CO_9", Category.COMMON,
+                    "Turn off warnings about deprecated"
+                    + " conversion from string constant to char *",
+                    "-Wno-write-strings");
     // NOTE: Add new options to all_options list below
 
     public enum Category
@@ -82,6 +86,7 @@ public enum CompileOption
         allOptions.add(CPP98);
         allOptions.add(CPP03);
         allOptions.add(CPP11);
+        allOptions.add(WNOWRITESTRINGS);
     }
 
     public static List<CompileOption> getOptionsForCategory(Category c)
