@@ -73,7 +73,7 @@
         <url-pattern>/verify.do</url-pattern>
     </filter-mapping>
     <session-config>
-        <session-timeout>5</session-timeout>
+        <session-timeout>15</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>signin.do</welcome-file>

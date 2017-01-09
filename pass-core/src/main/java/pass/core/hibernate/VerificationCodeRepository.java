@@ -121,4 +121,28 @@ public class VerificationCodeRepository
             return null;
         }
     }
+
+    public boolean removeBy(String username,
+                            VerificationCode.Reason reason)
+    {
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            Query q = session.createQuery("DELETE from VerificationCode vc"
+                                          + " where vc.user.username=:username"
+                                          + " and vc.reason=:reason");
+            q.setParameter("username", username);
+            q.setParameter("reason", reason);
+            q.executeUpdate();
+            tx.commit();
+            return true;
+        }
+        catch (Exception ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            LOGGER.log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 }

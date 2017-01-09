@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 import pass.core.common.HashedPassword;
 import pass.core.hibernate.HibernateSession;
 import pass.core.hibernate.UsersRepository;
+import pass.core.hibernate.VerificationCodeRepository;
 import pass.core.model.User;
+import pass.core.model.VerificationCode;
 
 public class AuthenticationService
 {
@@ -63,6 +65,15 @@ public class AuthenticationService
                                                      user.getFirstname(),
                                                      user.getLastname(),
                                                      user.getStudentId());
+                    if (verified) {
+                        // Remove any existing verification codes
+                        // for this user for ACCOUNT_CREATION
+                        VerificationCodeRepository vcRepo;
+                        vcRepo = new VerificationCodeRepository(hs);
+                        VerificationCode.Reason REASON;
+                        REASON = VerificationCode.Reason.ACCOUNT_CREATION;
+                        vcRepo.removeBy(username, REASON);
+                    }
                 }
             }
             ServerStatusService sss = new ServerStatusService();

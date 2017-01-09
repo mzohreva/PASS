@@ -129,7 +129,7 @@ public class AccountService
         }
     }
 
-    public boolean verifyAccount(VerificationCode vc) throws ServiceException
+    public void verifyAccount(VerificationCode vc) throws ServiceException
     {
         if (vc.getReason() != VerificationCode.Reason.ACCOUNT_CREATION) {
             throw new ServiceException(ErrorCode.INVALID_VCODE);
@@ -139,12 +139,8 @@ public class AccountService
             User user = vc.getUser();
             user.setVerified(true);
             UsersRepository userRepo = new UsersRepository(hs);
-            boolean updated = userRepo.updateUser(user);
-            if (!updated) {
-                throw new ServiceException(ErrorCode.UNKNOWN_ERROR);
-            }
-            new VerificationCodeRepository(hs).remove(vc);
-            return true;
+            userRepo.updateUser(user);
+            // NOTE: vc will be deleted after successful login
         }
     }
 
