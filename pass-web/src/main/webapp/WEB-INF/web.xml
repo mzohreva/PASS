@@ -67,9 +67,6 @@
     <!-- Filter mappings for RequestLogger -->
     <filter-mapping>
         <filter-name>logRequests</filter-name>
-        <url-pattern>/recover_account.do</url-pattern>
-        <url-pattern>/register.do</url-pattern>
-        <url-pattern>/reset_password.do</url-pattern>
         <url-pattern>/verify.do</url-pattern>
     </filter-mapping>
     <session-config>

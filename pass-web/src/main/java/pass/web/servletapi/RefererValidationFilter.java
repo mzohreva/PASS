@@ -11,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import pass.core.common.Config;
 
 @WebFilter ("/*")
@@ -21,13 +20,6 @@ public class RefererValidationFilter implements Filter
     private static final Logger LOGGER = Logger.getLogger(RefererValidationFilter.class.getName());
 
     private String serverUrl;
-
-    private final String[] exemptViews = {
-        "/signin.do",
-        "/register.do",
-        "/verify.do",
-        "/recover_account.do"
-    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException
@@ -42,27 +34,16 @@ public class RefererValidationFilter implements Filter
                    new Object[] {serverUrl, referer, servletPath, decision});
     }
 
-    private boolean isExempt(String servletPath)
-    {
-        for (String exempt : exemptViews) {
-            if (exempt.equals(servletPath)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void doFilter(ServletRequest req,
                          ServletResponse res,
                          FilterChain chain)
             throws IOException, ServletException
     {
-        HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
-        String referer = request.getHeader("Referer");
-        if (!isExempt(request.getServletPath())) {
+        if (request.getMethod().equals("POST")) {
+            String referer = request.getHeader("Referer");
             if (referer != null) {
                 // Check the header value against serverUrl
                 boolean ok = referer.startsWith(serverUrl);

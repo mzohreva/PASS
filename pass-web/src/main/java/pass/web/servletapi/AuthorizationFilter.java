@@ -49,7 +49,6 @@ public class AuthorizationFilter implements Filter
         HttpSession session = request.getSession();
 
         if (!SessionStore.isAuthenticated(session)) {
-            log(request.getRequestURI(), "not authenticated");
             response.sendRedirect(WebConfig.getInstance().view("signin"));
             return;
         }
