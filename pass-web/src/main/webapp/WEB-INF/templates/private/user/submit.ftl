@@ -6,8 +6,10 @@
 
 <#assign page_content>
 <p>
-    Due on <strong>${project.dueDate}</strong>
-    with a grace period of ${project.gracePeriodHumanReadable}.
+    Due on <strong>${project.dueDate}</strong>.
+    Late submissions are accepted up to
+    ${project.gracePeriodHumanReadable} after the
+    due date.
 </p>
 
 <@panel title="Download assignment material">
