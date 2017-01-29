@@ -8,6 +8,8 @@ common_options=$5;
 c_options=$6;
 cpp_options=$7;
 
+compile_timeout="120s"
+
 find $submission_path -type f -exec cp {} $scratch_path/ \;
 find $auxiliary_files_path -type f -exec cp -f {} $scratch_path/ \;
 cd $scratch_path
@@ -29,12 +31,12 @@ for source_file in $files; do
     if [ ${source_file: -2} == ".c" ] || [ ${source_file: -2} == ".C" ]; then
         opts="$common_options $c_options";
         echo -e "Compiling $source_file with gcc $opts";
-        gcc $opts -c $source_file -o $object_file;
+        timeout --signal=KILL $compile_timeout gcc $opts -c $source_file -o $object_file;
         ret=$?;
     else
         opts="$common_options $cpp_options";
         echo -e "Compiling $source_file with g++ $opts";
-        g++ $opts -c $source_file -o $object_file;
+        timeout --signal=KILL $compile_timeout g++ $opts -c $source_file -o $object_file;
         ret=$?;
         linker_to_use="g++"
     fi
@@ -48,7 +50,7 @@ done
 if [ "$ret" -eq "0" ]; then
     # Link all object files
     echo -e "Linking with $linker_to_use";
-    $linker_to_use -o $executable ${to_link[@]}
+    timeout --signal=KILL $compile_timeout $linker_to_use -o $executable ${to_link[@]}
     ret=$?;
 fi
 

@@ -8,16 +8,17 @@ public enum CompileOption
 {
     WALL("CO_1", Category.COMMON, "Enable all warnings", "-Wall"),
     WEXTRA("CO_2", Category.COMMON, "Enable extra warnings", "-Wextra"),
-    C90("CO_3", Category.C_DIALECTS, "C90", "--std=c90"),
-    C99("CO_4", Category.C_DIALECTS, "C99", "--std=c99"),
-    C11("CO_5", Category.C_DIALECTS, "C11", "--std=c11"),
-    CPP98("CO_6", Category.CPP_DIALECTS, "C++98", "--std=c++98"),
-    CPP03("CO_7", Category.CPP_DIALECTS, "C++03", "--std=c++03"),
-    CPP11("CO_8", Category.CPP_DIALECTS, "C++11", "--std=c++11"),
+    C90("CO_3", Category.C_DIALECTS, "C90", "-std=c90"),
+    C99("CO_4", Category.C_DIALECTS, "C99", "-std=c99"),
+    C11("CO_5", Category.C_DIALECTS, "C11", "-std=c11"),
+    CPP98("CO_6", Category.CPP_DIALECTS, "C++98", "-std=c++98"),
+    CPP03("CO_7", Category.CPP_DIALECTS, "C++03", "-std=c++03"),
+    CPP11("CO_8", Category.CPP_DIALECTS, "C++11", "-std=c++11"),
     WNOWRITESTRINGS("CO_9", Category.COMMON,
                     "Turn off warnings about deprecated"
                     + " conversion from string constant to char *",
-                    "-Wno-write-strings");
+                    "-Wno-write-strings"),
+    WNONE("CO_10", Category.COMMON, "Disable all warnings", "-w");
     // NOTE: Add new options to all_options list below
 
     public enum Category
@@ -87,6 +88,7 @@ public enum CompileOption
         allOptions.add(CPP03);
         allOptions.add(CPP11);
         allOptions.add(WNOWRITESTRINGS);
+        allOptions.add(WNONE);
     }
 
     public static List<CompileOption> getOptionsForCategory(Category c)

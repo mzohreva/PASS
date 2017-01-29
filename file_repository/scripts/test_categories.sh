@@ -29,6 +29,10 @@ sandbox="/usr/local/bin/simple_sandbox";
 nobody=65534;       # Usually 99 in RHEL, 65534 in Ubuntu
 nogroup=65534;      # Usually 99 in RHEL, 65534 in Ubuntu
 
+if [ ! -x "$executable" ]; then
+    exit 1
+fi
+
 array_sum()
 {
     # $@: an array of numbers expanded
