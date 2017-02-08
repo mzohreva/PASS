@@ -70,8 +70,14 @@ for cf in $category_files; do
             eval_script=${grading_tests}/${line}".evaluator"
             output_file=${scratch_path}/${line}".output";
             diff_file=${scratch_path}/${line}".diff";
+            args_file=${grading_tests}/${line}".args"
 
-            $sandbox -u $nobody -g $nogroup -t 500 $executable <$input_file >$output_file;
+            args=""
+            if [ -e "$args_file" ]; then
+                args=$(head -1 $args_file)
+            fi
+
+            $sandbox -u $nobody -g $nogroup -t 500 $executable $args <$input_file >$output_file;
 
             # Evaluating the output
             if [ -x "$eval_script" ]; then
