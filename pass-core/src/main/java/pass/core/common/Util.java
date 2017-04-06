@@ -1,9 +1,7 @@
 package pass.core.common;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -80,62 +78,37 @@ public class Util
         return fileNames;
     }
 
-    private static void readStream(InputStream stream, List<String> output)
-            throws IOException
-    {
-        InputStreamReader isr = new InputStreamReader(stream);
-        try (BufferedReader reader = new BufferedReader(isr)) {
-            while (reader.ready()) {
-                String line = reader.readLine();
-                if (output != null) {
-                    output.add(line);
-                }
-            }
-        }
-    }
-
-    private static String readStream(InputStream stream) throws IOException
-    {
-        StringBuilder sb = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(stream);
-        try (BufferedReader reader = new BufferedReader(isr)) {
-            while (reader.ready()) {
-                String line = reader.readLine();
-                sb.append(line).append("\n");
-            }
-        }
-        return sb.toString();
-    }
-
     public static void runCommand(String[] cmdArray,
-                                  List<String> stdout,
-                                  List<String> stderr)
+                                  LineVisitor stdoutVisitor,
+                                  LineVisitor stderrVisitor)
             throws IOException, InterruptedException
     {
         Process proc = Runtime.getRuntime().exec(cmdArray);
+        Thread t1 = new Thread(new StreamGobbler(proc.getInputStream(), stdoutVisitor));
+        Thread t2 = new Thread(new StreamGobbler(proc.getErrorStream(), stderrVisitor));
+        t1.start();
+        t2.start();
         proc.waitFor();
-        InputStream procOutput = proc.getInputStream();
-        InputStream procError = proc.getErrorStream();
-        readStream(procOutput, stdout);
-        readStream(procError, stderr);
+        t1.join();
+        t2.join();
     }
 
     public static String runCommand(String cmd)
             throws IOException, InterruptedException
     {
         Process proc = Runtime.getRuntime().exec(cmd);
+        StringBuffer stdout = new StringBuffer();
+        LineVisitor visitor = (String line) -> {
+            stdout.append(line).append("\n");
+        };
+        Thread t1 = new Thread(new StreamGobbler(proc.getInputStream(), visitor));
+        Thread t2 = new Thread(new StreamGobbler(proc.getErrorStream()));
+        t1.start();
+        t2.start();
         proc.waitFor();
-        InputStream procOutput = proc.getInputStream();
-        return readStream(procOutput);
-    }
-
-    public static String runCommand(String[] cmdArray)
-            throws IOException, InterruptedException
-    {
-        Process proc = Runtime.getRuntime().exec(cmdArray);
-        proc.waitFor();
-        InputStream procOutput = proc.getInputStream();
-        return readStream(procOutput);
+        t1.join();
+        t2.join();
+        return stdout.toString();
     }
 
     public static String generateRandomPassword(int length)

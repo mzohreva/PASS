@@ -3,11 +3,12 @@ package pass.core.scheduling;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pass.core.common.LineVisitor;
 import pass.core.common.Util;
 import pass.core.filesystem.ProjectFiles;
 import pass.core.filesystem.SubmissionFiles;
@@ -44,21 +45,7 @@ public class EvaluateSubmissionTask extends BaseTask
         return sbOptions.toString();
     }
 
-    private static void appendLines(StringBuilder output, String input)
-    {
-        final int MAX_LINE_SIZE = 80;
-        int lineLength = 0;
-        for (int i = 0; i < input.length(); i++) {
-            output.append(input.charAt(i));
-            lineLength++;
-            if (lineLength >= MAX_LINE_SIZE) {
-                output.append('\n');
-                lineLength = 0;
-            }
-        }
-    }
-
-    private static void truncateCompileMessage(StringBuilder sbMsg)
+    private static void truncateCompileMessage(StringBuffer sbMsg)
     {
         final int MAX_SIZE = 2048;
         if (sbMsg.length() > MAX_SIZE) {
@@ -87,27 +74,25 @@ public class EvaluateSubmissionTask extends BaseTask
                 prepareOptions(options, CompileOption.Category.C_DIALECTS),
                 prepareOptions(options, CompileOption.Category.CPP_DIALECTS)
             };
-            List<String> compileStdOut = new ArrayList<>();
-            List<String> compileStdErr = new ArrayList<>();
-            Util.runCommand(cmdCompile, compileStdOut, compileStdErr);
-            boolean foundCompileError = false;
-            StringBuilder sbCompileMsg = new StringBuilder();
-            for (String line : compileStdOut) {
-                appendLines(sbCompileMsg, line.replaceAll(submissionPath, ""));
-                sbCompileMsg.append('\n');
-                if (line.contains("COMPILE_FAIL")) {
-                    foundCompileError = true;
+            StringBuffer sbCompileMsg = new StringBuffer();
+            AtomicBoolean compileSuccessful = new AtomicBoolean(false);
+            LineVisitor stdoutVisitor = (String line) -> {
+                sbCompileMsg.append(line.replaceAll(submissionPath, ""));
+                sbCompileMsg.append("\n");
+                if (line.contains("COMPILE_SUCCESS")) {
+                    compileSuccessful.set(true);
                 }
-            }
-            for (String line : compileStdErr) {
-                appendLines(sbCompileMsg, line.replaceAll(submissionPath, ""));
-                sbCompileMsg.append('\n');
-            }
+            };
+            LineVisitor stderrVisitor = (String line) -> {
+                sbCompileMsg.append(line.replaceAll(submissionPath, ""));
+                sbCompileMsg.append("\n");
+            };
+            Util.runCommand(cmdCompile, stdoutVisitor, stderrVisitor);
             truncateCompileMessage(sbCompileMsg);
             submission.setCompileResults(sbCompileMsg.toString(),
-                                         !foundCompileError);
+                                         compileSuccessful.get());
             repo.updateSubmission(submission);
-            return !foundCompileError;
+            return compileSuccessful.get();
         }
         catch (IOException | InterruptedException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -129,12 +114,11 @@ public class EvaluateSubmissionTask extends BaseTask
                 executable,
                 scratchPath
             };
-            List<String> testOutput = new ArrayList<>();
-            Util.runCommand(cmdTest, testOutput, null);
-            StringBuilder sbTestResult = new StringBuilder();
-            testOutput.forEach((line) -> {
+            StringBuffer sbTestResult = new StringBuffer();
+            LineVisitor stdoutVisitor = (String line) -> {
                 sbTestResult.append(line).append("<br/>\n");
-            });
+            };
+            Util.runCommand(cmdTest, stdoutVisitor, null);
             submission.setTestResult(sbTestResult.toString());
             repo.updateSubmission(submission);
             return true;
